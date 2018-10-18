@@ -2,6 +2,9 @@
 const nameField = document.querySelector('#name');
 nameField.focus();
 
+
+/***JOB ROLE SECTION ******/
+
 //hide input field when the option "other" is selected in job role.
 const otherTitle = document.querySelector('#other-title');
 otherTitle.style.display = 'none';
@@ -21,6 +24,7 @@ for (let i = 0; i < allTitles.length; i++) {
     });
 }
 
+/******T-SHIRT INFO SECTION **********************************************************************/
 
 //select design themes
 const designs = document.querySelectorAll('#design');
@@ -55,6 +59,7 @@ for (let i = 0; i < designs.length; i++) {
 }
 
 
+/***REGISTER FOR ACTIVITIES SECTION ************************************************************/
 const allActivities = document.querySelectorAll('.activities input');
 const activitiesDiv = document.querySelector('.activities');
 //create a div to store total cost of activities
@@ -124,9 +129,44 @@ for (let i = 0; i < allActivities.length; i++) {
         //append the totalCost to the DIV created at the bottom of the activities list.
         activitiesDiv.appendChild(totalDiv);
     });
-
 }
 
+
+/***PAYMENT INFO SECTION **************************************************************************/
+
+const allPayments = document.querySelectorAll('#payment');
+const paymentSection = document.querySelector('#payment');
+const paymentInfos = document.querySelectorAll('div p');
+const creditCard = document.querySelector('#credit-card');
+
+const paypal = paymentInfos[0];
+const bitcoin = paymentInfos[1];
+const hide = (payment) => payment.style.display = 'none';
+const show = (payment) => payment.style.display = 'block';
+
+
+//make credit card as default payment selection
+paymentSection.selectedIndex = '1';
+hide(paypal);
+hide(bitcoin);
+
+for (let i = 0; i < allPayments.length; i++) {
+    allPayments[i].addEventListener('change', (event) => {
+        if (event.target.value == 'credit card') {
+            hide(paypal);
+            hide(bitcoin);
+            show(creditCard);
+        } else if (event.target.value == 'paypal') {
+            show(paypal);
+            hide(bitcoin);
+            hide(creditCard);
+        } else if (event.target.value == 'bitcoin') {
+            show(bitcoin);
+            hide(paypal);
+            hide(creditCard);
+        }
+    });
+}
 
 
 
