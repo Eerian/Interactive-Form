@@ -169,7 +169,46 @@ for (let i = 0; i < allPayments.length; i++) {
 }
 
 
+/***VALIDATIONS SECTION **************************************************************************/
 
+const submitButton = document.querySelector('button');
+const email = document.querySelector('#mail');
+const container = document.querySelectorAll('fieldset')[0];
+//select email label to insert error message for "name" before it.
+const emailLabel = document.querySelectorAll('fieldset :nth-child(4)')[0];
+
+
+
+//Validate name
+const checkName = (name) => {
+    const nameInput = /^[A-Za-z//]+$/;
+    if (nameInput.test(name) == false) {
+        const p = document.createElement('p');
+        //styles for the error message.
+        p.style.marginTop = "-15px";
+        p.style.paddingBottom = "10px";
+        p.style.background = "pink";
+        p.style.color = "red";
+
+        p.innerText = 'Name must not be left empty and must only contain letters.';
+        //insert error message right on top of email: so it shows under Name:
+        container.insertBefore(p, emailLabel);
+        console.log("Error");
+    }
+}
+
+// //Validate Email
+// const checkEmail = (email) => {
+//     const emailInput = /\w+/;
+//     if (emailInput.test(email) == false) {
+//        alert('Please enter a valid email');
+//     }   
+// }
+
+submitButton.addEventListener('click', () => {
+    checkName(nameField.value);
+    // checkEmail(email.value);
+});
 
 
 
