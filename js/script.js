@@ -3,7 +3,6 @@ const nameField = document.querySelector('#name');
 nameField.focus();
 
 
-
 /***JOB ROLE SECTION ******/
 
 //hide input field when the option "other" is selected in job role.
@@ -30,7 +29,7 @@ for (let i = 0; i < allTitles.length; i++) {
 //select design themes
 const designs = document.querySelectorAll('#design');
 //select all colors
-const colors = document.querySelectorAll('#color');
+const colors = document.querySelector('#color');
 //select the parent div of all colors 
 const allColorsParentDiv = document.querySelector('#colors-js-puns select');
 //select the colors for IloveJS theme
@@ -38,12 +37,16 @@ const iLoveJSThemeColors = document.querySelectorAll('#color option:nth-child(n+
 //select the colors for JS Puns theme
 const jsPunsThemeColors = document.querySelectorAll('#color option:nth-child(-n+3)');
 
+//Start the page with hidden colors until a theme is selected.
+colors.style.display = 'none';
+
 //loop through design themes
 for (let i = 0; i < designs.length; i++) {
     designs[i].addEventListener('change', (event) => {
         //if the theme selected is JS PUNS, loop thru ILoveJS colors and remove them.
         //then add JS PUNS colors.
         if (event.target.value == 'js puns') {
+            colors.style.display = '';
             for (let i = 0; i < iLoveJSThemeColors.length; i++) {
                 allColorsParentDiv.removeChild(iLoveJSThemeColors[i]);
                 allColorsParentDiv.appendChild(jsPunsThemeColors[i]);
@@ -51,14 +54,14 @@ for (let i = 0; i < designs.length; i++) {
             //or if theme selected is ILoveJS loop thru the JS PUNS colors and remove them
             //then add the ILoveJS colors.   
         } else if (event.target.value == 'heart js') {
+            colors.style.display = '';
             for (let i = 0; i < jsPunsThemeColors.length; i++) {
                 allColorsParentDiv.removeChild(jsPunsThemeColors[i]);
                 allColorsParentDiv.appendChild(iLoveJSThemeColors[i]);
             }
-            //if no theme is selected display all colors
+            //if no theme is selected remove all colors
         } else if (event.target.value == 'Select Theme') {
-            allColorsParentDiv.appendChild(iLoveJSThemeColors[i]);
-            allColorsParentDiv.appendChild(jsPunsThemeColors[i]);
+            colors.style.display = 'none';
         }
     });
 }
@@ -193,7 +196,7 @@ const regForActivities = document.querySelector('.activities :nth-child(2)');
 
 
 
-
+//Most used functions
 const styleError = (p) => {
     //styles for the error message.
     p.style.marginTop = "-10px";
@@ -207,11 +210,25 @@ const makeRed = (label) => {
     label.style.color = 'red';
 }
 
-//*** */ Validate name
+const removeRedColor = (label) => {
+    label.style.color = '';
+}
+
+
+
+//*** */ VALIDATE NAME****
 //select Name label to turn red if error
 const nameLabel = document.querySelector('label[for=name]');
 
+
+//Check if error <p> for NAME exists and remove it. 
 const checkName = (name) => {
+    const nameError = document.querySelector('p:nth-child(4)');
+    if (nameError) {
+        basicInfoFieldset.removeChild(nameError);
+        removeRedColor(nameLabel);
+    }
+
     const nameInput = /^[A-Za-z//]+$/;
     if (nameInput.test(name) == false) {
         //create an error paragraph
@@ -224,12 +241,21 @@ const checkName = (name) => {
         //insert error message right on top of email: so it shows under Name:
         basicInfoFieldset.insertBefore(p, emailLabel);
     }
+
 }
 
-//*** */ Validate Email
-//select email label to turn red in case of error
 
+//*** */ VALIDATE EMAIL****
+//select email label to turn red in case of error
 const checkEmail = (email) => {
+    //Check if error <p> exists for EMAIL exists and remove it.
+    const emailError = document.querySelector('p:nth-child(6)');
+    if (emailError) {
+        basicInfoFieldset.removeChild(emailError);
+        removeRedColor(emailLabel);
+    }
+
+
     //regex to accept (letters, numbers, . and _ symbols before @ sign)
     //and to accept (letters, numbers, . and _ symbols after @ sign)
     //then accept (.) then after the (.) accept letters only from 2-4 letters long.
@@ -248,12 +274,21 @@ const checkEmail = (email) => {
     }
 }
 
-//*** /Validare if at least one checkBox is checked.
+
+//*** /VALIDATE CHECKBOXES***
 
 //select Register for Activities label to turn red in case of error.
 const regForActivitiesLabel = document.querySelector('.activities legend');
 
 const validateCheckBox = () => {
+    //Check if error <p> exists for REG FOR ACTIVITIES exists and remove it.
+    const checkBoxError = document.querySelector('.activities p');
+    if (checkBoxError) {
+        activitiesFieldset.removeChild(checkBoxError);
+        removeRedColor(regForActivitiesLabel);
+    }
+
+
     for (let i = 0; i < allActivities.length; i++) {
         if (allActivities[i].checked) {
             return true;
@@ -272,8 +307,8 @@ const validateCheckBox = () => {
 
 
 
+//*** */VALIDATE CREDIT CARD***
 
-//*** */Validate Credit Card
 const creditCardNumber = document.querySelector('#cc-num');
 const zipcode = document.querySelector('#zip');
 const securityCode = document.querySelector('#cvv');
@@ -286,6 +321,36 @@ const cardNumberDiv = document.querySelector('#credit-card div');
 
 
 const checkCreditCard = (card, zip, cvv) => {
+    //Remove Credit Card Number Errors:
+    //Select and loop thru all <p>s inside Credit Card Section
+    const allCreditCardErrors = document.querySelectorAll('#credit-card p');
+
+    //Check if any <p> elements exists and contains the word "Credit" and remove it
+    for (var i = 0; i < allCreditCardErrors.length; i++) {
+        if (allCreditCardErrors[i].textContent.includes('Credit')) {
+            creditCard.removeChild(allCreditCardErrors[i]);
+            removeRedColor(cardNumberLabel);
+        }
+    }
+
+    //Remove ZipCode Errors
+    //Check if any <p> elements exists and contains the word "Zip" and remove it
+    for (var i = 0; i < allCreditCardErrors.length; i++) {
+        if (allCreditCardErrors[i].textContent.includes('Zip')) {
+            creditCard.removeChild(allCreditCardErrors[i]);
+            removeRedColor(zipCodeLabel);
+        }
+    }
+
+    //Remove Security Code errors
+    //Check if any <p> elements exists and contains the word "CVV" and remove it
+    for (var i = 0; i < allCreditCardErrors.length; i++) {
+        if (allCreditCardErrors[i].textContent.includes('CVV')) {
+            creditCard.removeChild(allCreditCardErrors[i]);
+            removeRedColor(cvvLabel);
+        }
+    }
+
     //Accept CC numbers 13 to 16 digits long
     const creditCardInput = /^\d{13,16}$/;
     if (creditCardInput.test(card) == false) {
@@ -334,17 +399,16 @@ const checkCreditCard = (card, zip, cvv) => {
 }
 
 
-
 // Add eventListener to Submit Button
 submitButton.addEventListener('click', (e) => {
 
     e.preventDefault();
 
     checkName(nameField.value);
-    // checkEmail(email.value);
-    // validateCheckBox();
-    // if (allPaymentOptions.value == 'credit card') {
-    //     checkCreditCard(creditCardNumber.value, zipcode.value, securityCode.value);
-    // }
+    checkEmail(email.value);
+    validateCheckBox();
+    if (allPaymentOptions.value == 'credit card') {
+        checkCreditCard(creditCardNumber.value, zipcode.value, securityCode.value);
+    }
 
 });
