@@ -173,6 +173,10 @@ for (let i = 0; i < allPaymentOptions.length; i++) {
             show(bitcoin);
             hide(paypal);
             hide(creditCard);
+        } else if (event.target.value == 'select_method') {
+            hide(paypal);
+            hide(bitcoin);
+            hide(creditCard);
         }
     });
 }
@@ -220,33 +224,33 @@ const removeRedColor = (label) => {
 //select Name label to turn red if error
 const nameLabel = document.querySelector('label[for=name]');
 
-
 //Check if error <p> for NAME exists and remove it. 
 const checkName = (name) => {
-    const nameError = document.querySelector('p:nth-child(4)');
-    if (nameError) {
-        basicInfoFieldset.removeChild(nameError);
-        removeRedColor(nameLabel);
+        const nameError = document.querySelector('p:nth-child(4)');
+        if (nameError) {
+            basicInfoFieldset.removeChild(nameError);
+            removeRedColor(nameLabel);
+        }
+
+        const nameInput = /^[A-Za-z//]+$/;
+        if (nameInput.test(name) == false) {
+            //create an error paragraph
+            const p = document.createElement('p');
+            p.innerText = 'Name must not be left empty and must contain only letters!';
+            //styles for the error message.
+            //make name and error message red
+            makeRed(nameLabel);
+            styleError(p);
+            //insert error message right on top of email: so it shows under Name:
+            basicInfoFieldset.insertBefore(p, emailLabel);
+            return false;
+        } else {
+            return true;
+        }
+
     }
-
-    const nameInput = /^[A-Za-z//]+$/;
-    if (nameInput.test(name) == false) {
-        //create an error paragraph
-        const p = document.createElement('p');
-        p.innerText = 'Name must not be left empty and must contain only letters!';
-        //styles for the error message.
-        //make name and error message red
-        makeRed(nameLabel);
-        styleError(p);
-        //insert error message right on top of email: so it shows under Name:
-        basicInfoFieldset.insertBefore(p, emailLabel);
-    }
-
-}
-
-
-//*** */ VALIDATE EMAIL****
-//select email label to turn red in case of error
+    //*** */ VALIDATE EMAIL****
+    //select email label to turn red in case of error
 const checkEmail = (email) => {
     //Check if error <p> exists for EMAIL exists and remove it.
     const emailError = document.querySelector('p:nth-child(6)');
@@ -271,7 +275,11 @@ const checkEmail = (email) => {
 
         //insert error message right on top of Job Role: so it shows under Email:
         basicInfoFieldset.insertBefore(p, jobRoleLabel);
+        return false;
+    } else {
+        return true;
     }
+
 }
 
 
@@ -303,11 +311,12 @@ const validateCheckBox = () => {
 
     //insert error message below Register For Activities
     activitiesFieldset.insertBefore(p, regForActivities);
+    return false;
 }
 
 
 
-//*** */VALIDATE CREDIT CARD***
+//*** */VALIDATE CREDIT CARD, ZIP and SECURITY SECTION***
 
 const creditCardNumber = document.querySelector('#cc-num');
 const zipcode = document.querySelector('#zip');
@@ -320,34 +329,19 @@ const cvvLabel = document.querySelector('label[for=cvv]');
 const cardNumberDiv = document.querySelector('#credit-card div');
 
 
-const checkCreditCard = (card, zip, cvv) => {
-    //Remove Credit Card Number Errors:
+
+
+//*CARD NUMBER VALIDATION */
+
+const checkCreditCard = (card) => {
     //Select and loop thru all <p>s inside Credit Card Section
     const allCreditCardErrors = document.querySelectorAll('#credit-card p');
-
+    //Remove Credit Card Number Errors:
     //Check if any <p> elements exists and contains the word "Credit" and remove it
     for (var i = 0; i < allCreditCardErrors.length; i++) {
         if (allCreditCardErrors[i].textContent.includes('Credit')) {
             creditCard.removeChild(allCreditCardErrors[i]);
             removeRedColor(cardNumberLabel);
-        }
-    }
-
-    //Remove ZipCode Errors
-    //Check if any <p> elements exists and contains the word "Zip" and remove it
-    for (var i = 0; i < allCreditCardErrors.length; i++) {
-        if (allCreditCardErrors[i].textContent.includes('Zip')) {
-            creditCard.removeChild(allCreditCardErrors[i]);
-            removeRedColor(zipCodeLabel);
-        }
-    }
-
-    //Remove Security Code errors
-    //Check if any <p> elements exists and contains the word "CVV" and remove it
-    for (var i = 0; i < allCreditCardErrors.length; i++) {
-        if (allCreditCardErrors[i].textContent.includes('CVV')) {
-            creditCard.removeChild(allCreditCardErrors[i]);
-            removeRedColor(cvvLabel);
         }
     }
 
@@ -364,23 +358,57 @@ const checkCreditCard = (card, zip, cvv) => {
 
         //insert error message on top of Card Number
         creditCard.insertBefore(p, cardNumberDiv);
-
-    }
-    //Accept Zipcode 5 digits long
-    const zipcodeInput = /^\d{5}$/;
-    if (zipcodeInput.test(zip) == false) {
-        //create error message
-        const p = document.createElement('p');
-        p.innerText = 'Zip Code must be 5 digits';
-
-        //styles for error message
-        makeRed(zipCodeLabel);
-        styleError(p);
-
-        //insert error on top of Zip Code
-        creditCard.insertBefore(p, cardNumberDiv);
+        return false;
+    } else {
+        return true;
     }
 
+}
+
+//*ZIPCODE VALIDATION */
+const checkZip = (zip) => {
+        //Select and loop thru all <p>s inside Credit Card Section
+        const allCreditCardErrors = document.querySelectorAll('#credit-card p');
+        //Remove ZipCode Errors
+        //Check if any <p> elements exists and contains the word "Zip" and remove it
+        for (var i = 0; i < allCreditCardErrors.length; i++) {
+            if (allCreditCardErrors[i].textContent.includes('Zip')) {
+                creditCard.removeChild(allCreditCardErrors[i]);
+                removeRedColor(zipCodeLabel);
+            }
+        }
+        //Accept Zipcode 5 digits long
+        const zipcodeInput = /^\d{5}$/;
+        if (zipcodeInput.test(zip) == false) {
+            //create error message
+            const p = document.createElement('p');
+            p.innerText = 'Zip Code must be 5 digits';
+
+            //styles for error message
+            makeRed(zipCodeLabel);
+            styleError(p);
+
+            //insert error on top of Zip Code
+            creditCard.insertBefore(p, cardNumberDiv);
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+    //*SECURITY CODE VALIDATION */
+const checkCVV = (cvv) => {
+    //Select and loop thru all <p>s inside Credit Card Section
+    const allCreditCardErrors = document.querySelectorAll('#credit-card p');
+
+    //Remove Security Code errors
+    //Check if any <p> elements exists and contains the word "CVV" and remove it
+    for (var i = 0; i < allCreditCardErrors.length; i++) {
+        if (allCreditCardErrors[i].textContent.includes('CVV')) {
+            creditCard.removeChild(allCreditCardErrors[i]);
+            removeRedColor(cvvLabel);
+        }
+    }
     //Accept security code 3 digits long
     const securityCodeInput = /^\d{3}$/;
     if (securityCodeInput.test(cvv) == false) {
@@ -391,24 +419,40 @@ const checkCreditCard = (card, zip, cvv) => {
         //styles for error message
         makeRed(cvvLabel);
         styleError(p);
-
         //insert error on top of cvv Code
         creditCard.insertBefore(p, cardNumberDiv);
+        return false;
+    } else {
+        return true;
     }
 
 }
 
 
-// Add eventListener to Submit Button
+
+
+//Add eventListener to Submit Button
+// submitButton.addEventListener('click', (e) => {
+
+//     e.preventDefault();
+
+//     checkName(nameField.value);
+//     checkEmail(email.value);
+//     validateCheckBox();
+//     checkCreditCard(creditCardNumber.value);
+//     checkZip(zipcode.value);
+//     checkCVV(securityCode.value);
+
+// });
+
 submitButton.addEventListener('click', (e) => {
-
-    e.preventDefault();
-
-    checkName(nameField.value);
-    checkEmail(email.value);
-    validateCheckBox();
-    if (allPaymentOptions.value == 'credit card') {
-        checkCreditCard(creditCardNumber.value, zipcode.value, securityCode.value);
+    if (!checkName(nameField.value) ||
+        !checkEmail(email.value) ||
+        !validateCheckBox() ||
+        !checkCreditCard(creditCardNumber.value) ||
+        !checkZip(zipcode.value) ||
+        !checkCVV(securityCode.value)) {
+        e.preventDefault();
     }
 
 });
