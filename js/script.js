@@ -253,10 +253,14 @@ const checkName = (name) => {
     //select email label to turn red in case of error
 const checkEmail = (email) => {
     //Check if error <p> exists for EMAIL exists and remove it.
-    const emailError = document.querySelector('p:nth-child(6)');
-    if (emailError) {
-        basicInfoFieldset.removeChild(emailError);
-        removeRedColor(emailLabel);
+    const basicInfoParagraphs = document.querySelectorAll('fieldset p');
+    console.log(basicInfoParagraphs);
+    for (var i = 0; i < basicInfoParagraphs.length; i++) {
+
+        if (basicInfoParagraphs[i].textContent.includes('Email')) {
+            basicInfoFieldset.removeChild(basicInfoParagraphs[i]);
+            removeRedColor(emailLabel);
+        }
     }
 
 
@@ -332,7 +336,6 @@ const cardNumberDiv = document.querySelector('#credit-card div');
 
 
 //*CARD NUMBER VALIDATION */
-
 const checkCreditCard = (card) => {
     //Select and loop thru all <p>s inside Credit Card Section
     const allCreditCardErrors = document.querySelectorAll('#credit-card p');
@@ -425,33 +428,37 @@ const checkCVV = (cvv) => {
     } else {
         return true;
     }
-
 }
 
-
-
-
 //Add eventListener to Submit Button
-// submitButton.addEventListener('click', (e) => {
-
-//     e.preventDefault();
-
-//     checkName(nameField.value);
-//     checkEmail(email.value);
-//     validateCheckBox();
-//     checkCreditCard(creditCardNumber.value);
-//     checkZip(zipcode.value);
-//     checkCVV(securityCode.value);
-
-// });
-
 submitButton.addEventListener('click', (e) => {
+    //run all validations
+    checkName(nameField.value);
+    checkEmail(email.value);
+    validateCheckBox();
+    //run only if credit card is selected as payment option
+    if (allPaymentOptions.value == 'credit card') {
+        checkCreditCard(creditCardNumber.value);
+        checkZip(zipcode.value);
+        checkCVV(securityCode.value);
+    }
+
+
+
+    // check if any validations FAIL or PASS and display errors
+    //Check validation status only if credit card is selected
+    if (allPaymentOptions.value == 'credit card') {
+        if (!checkCreditCard(creditCardNumber.value) ||
+            !checkZip(zipcode.value) ||
+            !checkCVV(securityCode.value)) {
+            e.preventDefault();
+        }
+    }
+    //Check all other validation statuses 
+    //if all validations pass refresh page.
     if (!checkName(nameField.value) ||
         !checkEmail(email.value) ||
-        !validateCheckBox() ||
-        !checkCreditCard(creditCardNumber.value) ||
-        !checkZip(zipcode.value) ||
-        !checkCVV(securityCode.value)) {
+        !validateCheckBox()) {
         e.preventDefault();
     }
 
